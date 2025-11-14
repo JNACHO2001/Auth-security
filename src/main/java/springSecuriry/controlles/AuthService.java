@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import springSecuriry.dto.AuthResponse;
 import springSecuriry.dto.LoginRequest;
 import springSecuriry.dto.RegisterRequest;
+import springSecuriry.jwt.JwtService;
 import springSecuriry.models.Role;
 import springSecuriry.models.User;
 import springSecuriry.repository.UserRepository;
@@ -12,13 +13,15 @@ import springSecuriry.repository.UserRepository;
 
 @Service
 class AuthService {
-    
+    private final JwtService jwtService;
     private final  UserRepository  userRepository;
 
-    public AuthService(UserRepository userRepository) {
+    public AuthService(JwtService jwtService, UserRepository userRepository) {
+        this.jwtService = jwtService;
         this.userRepository = userRepository;
     }
-    
+
+   
     
     public AuthResponse login(LoginRequest req ){
         
@@ -43,7 +46,8 @@ class AuthService {
            
            
            userRepository.save(user);
-        return new AuthResponse("creado");
+           String  token =jwtService.getToken(user);
+        return new AuthResponse(token);
            
            
            
@@ -53,4 +57,6 @@ class AuthService {
     
     
     }
+
+   
 }
