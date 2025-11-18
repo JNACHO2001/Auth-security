@@ -54,7 +54,7 @@ class AuthService {
     
     }
     
-       public AuthResponse register(RegisterRequest req ){
+       public User register(RegisterRequest req ){
            
            var user =new User();
            
@@ -67,8 +67,8 @@ class AuthService {
            
            
            userRepository.save(user);
-           String  token =jwtService.getToken(user);
-        return new AuthResponse(token);
+          
+        return user;
            
            
            

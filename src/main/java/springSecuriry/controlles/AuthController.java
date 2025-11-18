@@ -21,15 +21,17 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req) {
+        
+        var token =authservice.login(req);
 
-        return ResponseEntity.ok(authservice.login(req));
+        return ResponseEntity.ok(token);
 
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest req) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
 
-        return ResponseEntity.ok(authservice.register(req));
+        return ResponseEntity.ok("creado " );
 
     }
 
