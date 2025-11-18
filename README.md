@@ -113,12 +113,4 @@ Otros artefactos relevantes:
 - `AuthService.login(LoginRequest)` — usa `AuthenticationManager` para autenticar, carga el usuario desde `UserRepository` y genera un token mediante `JwtService`.
 - `User` — entidad JPA que implementa `UserDetails` y expone la autoridad basada en el enum `Role`.
 
-## Buenas prácticas y próximos pasos recomendados
-
-1. Externalizar `SECRET_KEY` (variables de entorno, `application.yaml` no versionado o vault).
-2. Completar `JwtAuthFilter` para validar tokens y establecer la `Authentication` en `SecurityContextHolder`.
-3. Corregir la unidad temporal del `setExpiration(...)` si la intención era 24 horas.
-4. Hacer que `AuthController.register` invoque `authservice.register(...)` y devuelva un DTO adecuado (por ejemplo, con id, username y rol, sin la contraseña).
-5. Considerar usar prefijo `ROLE_` en las autoridades o utilizar `hasAuthority(...)` explícitamente al declarar reglas por rol.
-6. Evitar hardcodear credenciales de base de datos en archivos versionados; usar perfiles y variables de entorno para entornos distintos.
 
