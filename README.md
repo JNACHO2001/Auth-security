@@ -112,5 +112,18 @@ Otros artefactos relevantes:
 
 - `AuthService.login(LoginRequest)` — usa `AuthenticationManager` para autenticar, carga el usuario desde `UserRepository` y genera un token mediante `JwtService`.
 - `User` — entidad JPA que implementa `UserDetails` y expone la autoridad basada en el enum `Role`.
+ 
+##  DTOs y manejo centralizado de errores
+
+- DTO genérico de respuesta: `springSecuriry.dto.ApiResponse<T>` — estructura estándar usada por el `GlobalExceptionHandler` para devolver respuestas con `success`, `message` y `data`.
+- DTO para respuesta de usuario: `springSecuriry.dto.ResponseUser` — contiene `id`, `username`, `email`, `ciudad` y `role`. Está pensado para devolver datos de usuario sin exponer la contraseña.
+- Manejo centralizado de errores: `springSecuriry.controlles.GlobalExceptionHandler` captura excepciones de autenticación (`BadCredentialsException`, `UsernameNotFoundException`) y `IllegalArgumentException`, devolviendo `ApiResponse` con códigos HTTP 401 y 400 respectivamente. Esto proporciona una API de errores consistente.
+
+## Endpoints protegidos adicionales detectados
+
+- POST /prodetec/bien
+  - Descripción: ejemplo de controlador protegido (`ProdetecControllers`). Requiere autenticación según la configuración `SecurityConfig` (todas las rutas excepto `/api/auth/**` están protegidas). Devuelve un mensaje simple cuando la petición está autenticada correctamente.
+
+
 
 
