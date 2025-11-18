@@ -1,39 +1,41 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package springSecuriry.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import static org.springframework.security.config.Customizer.withDefaults;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import springSecuriry.jwt.JwtAuthFilter;
 
-/**
- *
- * @author jogo
- */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    private final JwtAuthFilter jwtAuthFilter;  
+    private final AuthenticationProvider authProvider;  
 
-        return http
-                .csrf(csrf
-                        -> csrf.disable())
-                .authorizeHttpRequests(authRequest
-                        -> authRequest
-                        .requestMatchers("/api/auth/**").permitAll()
-                        //.requestMatchers("/prodetec/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .formLogin(withDefaults())
-                .build();
-
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, AuthenticationProvider authProvider) {
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.authProvider = authProvider;
     }
 
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(csrf -> csrf.disable()) // Desactiva CSRF (no necesario con JWT)
+
+                .authorizeHttpRequests(authRequest -> authRequest
+                .requestMatchers("/api/auth/**").permitAll() // Permite acceso público a login/register
+                .anyRequest().authenticated() // Todo lo demás requiere autenticación
+                )
+                .sessionManagement(sessionManager -> sessionManager
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Sin sesiones (usa JWT)
+
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) //  Añade el filtro JWT
+                .authenticationProvider(authProvider) // ✅ Configura el proveedor de autenticación
+                .build();
+    }
 }
