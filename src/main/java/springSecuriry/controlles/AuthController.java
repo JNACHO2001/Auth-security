@@ -1,10 +1,13 @@
 package springSecuriry.controlles;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springSecuriry.dto.ApiResponse;
 import springSecuriry.dto.AuthResponse;
 import springSecuriry.dto.LoginRequest;
 import springSecuriry.dto.RegisterRequest;
@@ -29,9 +32,18 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
+    public ResponseEntity<ApiResponse> register(@RequestBody RegisterRequest req) {
+   var registeredData = authservice.register(req);
 
-        return ResponseEntity.ok("creado " );
+            // 2. Construir el ApiResponse con los 3 campos: success, message, y data
+            var response = new ApiResponse(
+                true,
+                "Registro exitoso. El usuario ha sido creado.",
+                registeredData // <-- ¡Aquí se incluye el objeto de respuesta!
+            );
+            
+            // 3. Devolver la respuesta con código HTTP 201 (Created)
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
 
